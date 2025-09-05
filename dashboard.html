@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Dashboard - Premier Real Estate</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-navy: #1e3a5f;
+            --accent-gold: #d4af37;
+            --light-gold: #f5e6a8;
+            --text-dark: #2c3e50;
+            --text-light: #6c757d;
+            --white: #ffffff;
+            --light-gray: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-gray);
+            color: var(--text-dark);
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 250px;
+            background: linear-gradient(135deg, var(--primary-navy), #2c4a6b);
+            color: var(--white);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-header h4 {
+            color: var(--accent-gold);
+            font-weight: 600;
+        }
+
+        .nav-item {
+            margin: 0.25rem 0;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.8) !important;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            margin: 0 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.1);
+            color: var(--white) !important;
+            transform: translateX(5px);
+        }
+
+        .nav-link.active {
+            background-color: var(--accent-gold);
+            color: var(--primary-navy) !important;
+        }
+
+        .nav-link i {
+            margin-right: 0.75rem;
+            width: 20px;
+        }
+
+        /* Top Navbar */
+        .top-navbar {
+            position: fixed;
+            top: 0;
+            left: 250px;
+            right: 0;
+            background: var(--white);
+            height: 70px;
+            z-index: 999;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+        }
+
+        .search-bar {
+            flex: 1;
+            max-width: 400px;
+            margin-right: 2rem;
+        }
+
+        .search-bar .form-control {
+            border-radius: 25px;
+            border: 2px solid #e9ecef;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar .form-control:focus {
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25);
+        }
+
+        .navbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .notification-btn {
+            position: relative;
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.2rem;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .notification-btn:hover {
+            background-color: var(--light-gray);
+            color: var(--primary-navy);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-dropdown img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-gold);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            margin-top: 70px;
+            padding: 2rem;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Stats Cards */
+        .stats-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stats-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--white);
+            margin-bottom: 1rem;
+        }
+
+        .stats-icon.saved { background: linear-gradient(135deg, #4CAF50, #45a049); }
+        .stats-icon.inquiries { background: linear-gradient(135deg, #2196F3, #1976D2); }
+        .stats-icon.viewed { background: linear-gradient(135deg, var(--accent-gold), #b8941f); }
+
+        .stats-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .stats-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Property Cards */
+        .property-card {
+            background: var(--white);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        .property-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .property-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .price-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--accent-gold);
+            color: var(--primary-navy);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: 600;
+        }
+
+        .property-info {
+            padding: 1.5rem;
+        }
+
+        .property-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .property-location {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .property-location i {
+            margin-right: 0.5rem;
+            color: var(--accent-gold);
+        }
+
+        /* Messages */
+        .message-item {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border-left: 4px solid var(--accent-gold);
+            transition: all 0.3s ease;
+        }
+
+        .message-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .message-sender {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .message-preview {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .message-time {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        /* AI Chatbot Styles */
+        .chat-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent-gold), #b8941f);
+            border: none;
+            border-radius: 50%;
+            color: var(--white);
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 1001;
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .chat-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(212, 175, 55, 0.6);
+        }
+
+        .chat-window {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 350px;
+            height: 500px;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            z-index: 1002;
+            transform: scale(0) translateY(50px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .chat-window.show {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary-navy), #2c4a6b);
+            color: var(--white);
+            padding: 1rem;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-title {
+            font-weight: 600;
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .chat-close {
+            background: none;
+            border: none;
+            color: var(--white);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0;
+        }
+
+        .chat-messages {
+            height: 350px;
+            overflow-y: auto;
+            padding: 1rem;
+            background: #fafafa;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 80%;
+            padding: 0.75rem 1rem;
+            border-radius: 18px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .message.bot .message-bubble {
+            background: var(--white);
+            color: var(--text-dark);
+            border: 1px solid #e9ecef;
+        }
+
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, var(--accent-gold), #b8941f);
+            color: var(--white);
+        }
+
+        .chat-input-container {
+            padding: 1rem;
+            border-top: 1px solid #e9ecef;
+            border-radius: 0 0 20px 20px;
+            background: var(--white);
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input input {
+            flex: 1;
+            border: 1px solid #e9ecef;
+            border-radius: 25px;
+            padding: 0.75rem 1rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .chat-input input:focus {
+            border-color: var(--accent-gold);
+        }
+
+        .chat-send-btn {
+            background: linear-gradient(135deg, var(--accent-gold), #b8941f);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: var(--white);
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .chat-send-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .view-all-btn {
+            color: var(--accent-gold);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .view-all-btn:hover {
+            color: #b8941f;
+            text-decoration: underline;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .top-navbar {
+                left: 0;
+            }
+
+            .mobile-toggle {
+                display: block;
+                background: none;
+                border: none;
+                color: var(--text-dark);
+                font-size: 1.2rem;
+                margin-right: 1rem;
+            }
+
+            .chat-window {
+                width: calc(100vw - 20px);
+                right: 10px;
+                bottom: 90px;
+                height: 450px;
+            }
+
+            .stats-card {
+                margin-bottom: 1rem;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-toggle {
+                display: none;
+            }
+        }
+
+        /* Custom scrollbar */
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--accent-gold);
+            border-radius: 10px;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .btn-custom {
+            background: linear-gradient(135deg, var(--accent-gold), #b8941f);
+            color: var(--white);
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+            color: var(--white);
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h4><i class="fas fa-home me-2"></i>Premier Estate</h4>
+        </div>
+        <ul class="nav flex-column mt-3">
+            <li class="nav-item">
+                <a class="nav-link active" href="#"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="fas fa-building"></i>My Properties</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="fas fa-heart"></i>Favorites</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="fas fa-envelope"></i>Messages</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="fas fa-user"></i>Profile</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"><i class="fas fa-sign-out-alt"></i>Logout</a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Top Navbar -->
+    <nav class="top-navbar">
+        <button class="mobile-toggle" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <div class="search-bar">
+            <input type="text" class="form-control" placeholder="Search properties, locations..." />
+        </div>
+        
+        <div class="navbar-actions">
+            <button class="notification-btn">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </button>
+            
+            <div class="dropdown profile-dropdown">
+                <button class="btn dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown">
+                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face" alt="Profile" />
+                    <span class="ms-2 d-none d-md-inline">John Smith</span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Welcome Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="welcome-section p-4 bg-white rounded-4 shadow-sm fade-in-up">
+                    <h2 class="text-dark mb-2">Welcome back, John! 👋</h2>
+                    <p class="text-muted">Here's what's happening with your real estate journey today.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row mb-5">
+            <div class="col-md-4 mb-3">
+                <div class="stats-card fade-in-up">
+                    <div class="stats-icon saved">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="stats-number">24</div>
+                    <div class="stats-label">Properties Saved</div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="stats-card fade-in-up" style="animation-delay: 0.1s;">
+                    <div class="stats-icon inquiries">
+                        <i class="fas fa-paper-plane"></i>
+                    </div>
+                    <div class="stats-number">8</div>
+                    <div class="stats-label">Inquiries Sent</div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="stats-card fade-in-up" style="animation-delay: 0.2s;">
+                    <div class="stats-icon viewed">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div class="stats-number">156</div>
+                    <div class="stats-label">Properties Viewed</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Favorites Section -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="section-header">
+                    <h3 class="section-title">Your Favorites</h3>
+                    <a href="#" class="view-all-btn">View All</a>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="property-card fade-in-up">
+                            <div class="property-image" style="background-image: url('https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&h=250&fit=crop');">
+                                <div class="price-badge">$850,000</div>
+                            </div>
+                            <div class="property-info">
+                                <div class="property-title">Modern Family Home</div>
+                                <div class="property-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    Beverly Hills, CA
+                                </div>
+                                <button class="btn btn-custom w-100">View Details</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="property-card fade-in-up" style="animation-delay: 0.1s;">
+                            <div class="property-image" style="background-image: url('https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=400&h=250&fit=crop');">
+                                <div class="price-badge">$1,200,000</div>
+                            </div>
+                            <div class="property-info">
+                                <div class="property-title">Luxury Condo</div>
+                                <div class="property-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    Manhattan, NY
+                                </div>
+                                <button class="btn btn-custom w-100">View Details</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="property-card fade-in-up" style="animation-delay: 0.2s;">
+                            <div class="property-image" style="background-image: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=250&fit=crop');">
+                                <div class="price-badge">$650,000</div>
+                            </div>
+                            <div class="property-info">
+                                <div class="property-title">Cozy Suburban House</div>
+                                <div class="property-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    Austin, TX
+                                </div>
+                                <button class="btn btn-custom w-100">View Details</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages and Recommendations Row -->
+        <div class="row">
+            <!-- Messages Section -->
+            <div class="col-lg-6 mb-4">
+                <div class="section-header">
+                    <h3 class="section-title">Recent Messages</h3>
+                    <a href="#" class="view-all-btn">View All</a>
+                </div>
+                <div class="messages-container">
+                    <div class="message-item fade-in-up">
+                        <div class="message-sender">Sarah Johnson - Agent</div>
+                        <div class="message-preview">Great news! The seller accepted your offer on the Beverly Hills property...</div>
+                        <div class="message-time">2 hours ago</div>
+                    </div>
+                    <div class="message-item fade-in-up" style="animation-delay: 0.1s;">
+                        <div class="message-sender">Michael Chen - Mortgage Advisor</div>
+                        <div class="message-preview">Your pre-approval documents are ready for review. Please check your email...</div>
+                        <div class="message-time">5 hours ago</div>
+                    </div>
+                    <div class="message-item fade-in-up" style="animation-delay: 0.2s;">
+                        <div class="message-sender">Emma Davis - Inspector</div>
+                        <div class="message-preview">Home inspection scheduled for Thursday at 10 AM. Please confirm your attendance...</div>
+                        <div class="message-time">1 day ago</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recommended Properties -->
+            <div class="col-lg-6 mb-4">
+                <div class="section-header">
+                    <h3 class="section-title">Recommended for You</h3>
+                    <a href="#" class="view-all-btn">View All</a>
+                </div>
+                <div class="row">
+                    <div class="col-12 mb-3">
+                        <div class="property-card fade-in-up" style="animation-delay: 0.1s;">
+                            <div class="row g-0">
+                                <div class="col-5">
+                                    <div class="property-image h-100" style="background-image: url('https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=200&h=150&fit=crop'); border-radius: 15px 0 0 15px;"></div>
+                                </div>
+                                <div class="col-7">
+                                    <div class="property-info">
+                                        <div class="property-title">Waterfront Villa</div>
+                                        <div class="property-location">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            Miami Beach, FL
+                                        </div>
+                                        <div class="price-badge position-static p-2 mb-2">$2,100,000</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <div class="property-card fade-in-up" style="animation-delay: 0.2s;">
+                            <div class="row g-0">
+                                <div class="col-5">
+                                    <div class="property-image h-100" style="background-image: url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=200&h=150&fit=crop'); border-radius: 15px 0 0 15px;"></div>
+                                </div>
+                                <div class="col-7">
+                                    <div class="property-info">
+                                        <div class="property-title">Mountain Retreat</div>
+                                        <div class="property-location">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            Aspen, CO
+                                        </div>
+                                        <div class="price-badge position-static p-2 mb-2">$1,750,000</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- AI Chat Button -->
+    <button class="chat-button" onclick="toggleChat()" id="chatButton">
+        <i class="fas fa-robot"></i>
+    </button>
+
+    <!-- AI Chat Window -->
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+            <h5 class="chat-title">Real Estate AI Assistant</h5>
+            <button class="chat-close" onclick="toggleChat()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                <div class="message-bubble">
+                    👋 Hello! I'm your AI real estate assistant. How can I help you today? I can answer questions about properties, market trends, or help you find your dream home!
+                </div>
+            </div>
+        </div>
+        <div class="chat-input-container">
+            <div class="chat-input">
+                <input type="text" id="messageInput" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
+                <button class="chat-send-btn" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
